@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import traceback
 
 from helpers import *
-
+import face_detection
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 if __name__ == "__main__":
@@ -30,8 +30,11 @@ if __name__ == "__main__":
 				pos_frame = cap_source.get(cv2.CAP_PROP_POS_FRAMES)
 				if pos_frame == 1:
 					showBGRimage(source_frame)
-					showBGRimage(target_frame)
+					#showBGRimage(target_frame)
+					face_detection.face_detect(source_frame)
 					#out.write(input_frame)
+				else:
+					break
 				print str(pos_frame) + " frames"
 			else:
 				if flag_source:
