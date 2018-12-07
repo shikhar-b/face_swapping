@@ -30,8 +30,8 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, (frame_width, frame_height))
-
+	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	limit = 10000
 	start = time.time()
 	try:
 		while True:
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 				if pos_frame == 1 or True:
 
 					#STEP 1: Landmark Detection
-					points1 , points2 = face_detection.landmark_detect(source_frame, target_frame)
+					points1 , points2 = face_detection.landmark_detect_clahe(source_frame, target_frame)
 
 					if empty_points(points1, points2, 1): continue
 
@@ -76,6 +76,14 @@ if __name__ == "__main__":
 					# showBGRimage(output)
 					# cv2.imshow("Face Swapped", output)
 					out.write(output)
+
+					if pos_frame == limit:
+						print ('time taken :' + str(time.time() - start))
+						cv2.destroyAllWindows()
+						cap_source.release()
+						cap_target.release()
+						out.release()
+						exit()
 				else:
 					break
 					print str(pos_frame) + " frames"

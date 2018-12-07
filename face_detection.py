@@ -28,7 +28,7 @@ def landmark_detect_clahe(source_image, target_image):
     cl1 = clahe.apply(source_gray)
     cl2 = clahe.apply(target_gray)
 
-    landmark_detect(cl1, cl2)
+    return landmark_detect(cl1, cl2)
 
 def intersect(face_landmarks_1, face_landmarks_2):
     points_1,points_2 = [],[]
