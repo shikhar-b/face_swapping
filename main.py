@@ -14,8 +14,11 @@ from cloning import cloning
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/JonSnow.mp4'
 
-# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+
+SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'

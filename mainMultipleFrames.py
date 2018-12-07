@@ -18,6 +18,9 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
+SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
 
@@ -82,6 +85,7 @@ if __name__ == "__main__":
 
 	print ('Starting to make target video')
 	output_video = []
+	points1 = []
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
 		target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
@@ -93,7 +97,11 @@ if __name__ == "__main__":
 
 		#STEP 1: Landmark Detection
 		# points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
-		fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe(sf, tf)
+		try:
+			fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe(sf, tf)
+		except:
+			if len(points1) == 0:
+				continue
 		if empty_points(points1, points2, 1): continue
 		#visualizeFeatures(sf, points1)
 		#visualizeFeatures(tf, points2)
@@ -103,6 +111,11 @@ if __name__ == "__main__":
 		hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
 		# visualizeFeatures(sf, hull1)
 		if empty_points(hull1, hull2, 2): continue
+
+		hull2 = np.asarray(hull2)
+		hull2[:, 0] = np.clip(hull2[:, 0], 0, target_frame.shape[1] - 1)
+		hull2[:, 1] = np.clip(hull2[:, 1], 0, target_frame.shape[0] - 1)
+		hull2 = listOfListToTuples(hull2.astype(np.int32).tolist())
 
 		# STEP 3: Triangulation
 		dt = triangulation(tf, hull2)
