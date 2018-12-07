@@ -3,9 +3,13 @@ import numpy as np
 import pdb
 import matplotlib.pyplot as plt
 import traceback
-
+import logging
 from helpers import *
 import face_detection
+from convex_hull import convex_hull
+from triangulation import triangulation
+from warping import warping
+from cloning import cloning
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
@@ -40,70 +44,35 @@ if __name__ == "__main__":
 				print ''
 				print pos_frame
 				if pos_frame == 1 or True:
-					#showBGRimage(source_frame)
-					#showBGRimage(target_frame)
-					points1 = face_detection.landmark_detect(source_frame)
-					points2 = face_detection.landmark_detect(target_frame)
 
-					print (len(points1))
-					print (len(points2))
+					#STEP 1: Landmark Detection
+					points1 , points2 = face_detection.landmark_detect(source_frame, target_frame)
 
-					if len(points1) == 0 or len(points2) == 0:
-						continue
+					if empty_points(points1, points2, 1): continue
 
-					# visualizeFeatures(source_frame, points1)
-					# visualizeFeatures(target_frame, points2)
+					#visualizeFeatures(source_frame, points1)
 
-					# Find convex hull
-					hull1 = []
-					hull2 = []
 
-					hullIndex = cv2.convexHull(np.array(points2), returnPoints=False)
-					# pdb.set_trace()
+					# STEP 2: Convex Hull
 
-					for i in xrange(0, len(hullIndex)):
-						hull1.append(points1[int(hullIndex[i])])
-						hull2.append(points2[int(hullIndex[i])])
+					hull1, hull2 = convex_hull(points1, points2)
 					# visualizeFeatures(source_frame, hull1)
-					# visualizeFeatures(target_frame, hull2)
+					if empty_points(hull1, hull2, 2): continue
 
-					# Find delanauy traingulation for convex hull points
-					sizeImg2 = target_frame.shape
-					rect = (0, 0, sizeImg2[1], sizeImg2[0])
 
-					dt = calculateDelaunayTriangles(rect, hull2, target_frame)
 
+
+					# STEP 3: Triangulation
+					dt = triangulation(target_frame, hull2)
 					if len(dt) == 0:
-						print 'No delaunay'
+						logging.info('delaunay triangulation empty')
 						continue
 
-					# Apply affine transformation to Delaunay triangles
-					for i in xrange(0, len(dt)):
-						t1 = []
-						t2 = []
+					# STEP 4: Warping
+					warping(dt, hull1, hull2, source_frame, img1Warped)
 
-						# get points for img1, img2 corresponding to the triangles
-						for j in xrange(0, 3):
-							t1.append(hull1[dt[i][j]])
-							t2.append(hull2[dt[i][j]])
-
-						warpTriangle(source_frame, img1Warped, t1, t2)
-
-					# Calculate Mask
-					hull8U = []
-					for i in xrange(0, len(hull2)):
-						hull8U.append((hull2[i][0], hull2[i][1]))
-
-					mask = np.zeros(target_frame.shape, dtype=target_frame.dtype)
-
-					cv2.fillConvexPoly(mask, np.int32(hull8U), (255, 255, 255))
-
-					r = cv2.boundingRect(np.float32([hull2]))
-
-					center = ((r[0] + int(r[2] / 2), r[1] + int(r[3] / 2)))
-
-					# Clone seamlessly.
-					output = cv2.seamlessClone(np.uint8(img1Warped), target_frame, mask, center, cv2.NORMAL_CLONE)
+					# STEP 5: Cloning
+					output = cloning(img1Warped, target_frame, hull2)
 					# showBGRimage(output)
 					# cv2.imshow("Face Swapped", output)
 					out.write(output)
