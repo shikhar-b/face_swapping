@@ -12,7 +12,7 @@ from warping import warping
 from cloning import cloning
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
+TARGET_PATH = 'datasets/Easy/JonSnow.mp4'
 
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
@@ -33,6 +33,7 @@ if __name__ == "__main__":
 	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
+	points1 = []
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
@@ -46,7 +47,11 @@ if __name__ == "__main__":
 				if pos_frame == 1 or True:
 
 					#STEP 1: Landmark Detection
-					face_landmarks_dict_1,face_landmarks_dict_2, points1 , points2 = face_detection.landmark_detect_clahe2(source_frame, target_frame)
+					try:
+						face_landmarks_dict_1, face_landmarks_dict_2, points1, points2 = face_detection.landmark_detect_clahe2(source_frame, target_frame)
+					except:
+						if len(points1) == 0:
+							continue
 
 					if empty_points(points1, points2, 1): continue
 
