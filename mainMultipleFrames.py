@@ -75,7 +75,7 @@ if __name__ == "__main__":
 	output_video = []
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
-		target_frame_encoding = face_recognition.face_encodings(frame, num_jitters=numJitters)[0]
+		target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
 		distance = face_recognition.face_distance(source_video_encodings, target_frame_encoding)
 		
 		sf = source_video[np.argmin(distance)]
@@ -83,7 +83,7 @@ if __name__ == "__main__":
 		img1Warped = np.copy(tf)
 
 		#STEP 1: Landmark Detection
-		points1 , points2 = face_detection.landmark_detect(sf, tf)
+		points1, points2 = face_detection.landmark_detect(sf, tf)
 		if empty_points(points1, points2, 1): continue
 		#visualizeFeatures(sf, points1)
 		#visualizeFeatures(tf, points2)
