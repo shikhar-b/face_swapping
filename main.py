@@ -6,7 +6,7 @@ import traceback
 import logging, time
 from helpers import *
 import face_detection
-from convex_hull import convex_hull
+from convex_hull import convex_hull, convex_hull_internal_points
 from triangulation import triangulation
 from warping import warping
 from cloning import cloning
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
 	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
-	limit = 10000
+	limit = 10
 	start = time.time()
 	try:
 		while True:
@@ -40,13 +40,13 @@ if __name__ == "__main__":
 			img1Warped = np.copy(target_frame);
 
 			if flag_source and flag_target:
-				pos_frame = cap_source.get(cv2.CAP_PROP_POS_FRAMES)
+				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				print ''
 				print pos_frame
 				if pos_frame == 1 or True:
 
 					#STEP 1: Landmark Detection
-					points1 , points2 = face_detection.landmark_detect_clahe(source_frame, target_frame)
+					face_landmarks_dict_1,face_landmarks_dict_2, points1 , points2 = face_detection.landmark_detect_clahe(source_frame, target_frame)
 
 					if empty_points(points1, points2, 1): continue
 
@@ -55,7 +55,8 @@ if __name__ == "__main__":
 
 					# STEP 2: Convex Hull
 
-					hull1, hull2 = convex_hull(points1, points2)
+
+					hull1, hull2 = convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_landmarks_dict_2)
 					# visualizeFeatures(source_frame, hull1)
 					if empty_points(hull1, hull2, 2): continue
 
@@ -73,7 +74,7 @@ if __name__ == "__main__":
 
 					# STEP 5: Cloning
 					output = cloning(img1Warped, target_frame, hull2)
-					# showBGRimage(output)
+					#showBGRimage(output)
 					# cv2.imshow("Face Swapped", output)
 					out.write(output)
 

@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 
 def warping(dt, hull1, hull2, source_frame, img1Warped):
-    # Apply affine transformation to Delaunay triangles
+	# Apply affine transformation to Delaunay triangles
     for i in xrange(0, len(dt)):
         t1 = []
         t2 = []
