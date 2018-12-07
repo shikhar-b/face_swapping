@@ -6,8 +6,16 @@ import traceback
 
 from helpers import *
 import face_detection
+
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
+
+# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+
+# SOURCE_PATH = 'datasets/Hard/Joker.mp4'
+# TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
+
 if __name__ == "__main__":
 	cap_source = cv2.VideoCapture(SOURCE_PATH)
 	videoSpecific1(cap_source, SOURCE_PATH)
@@ -29,30 +37,45 @@ if __name__ == "__main__":
 
 			if flag_source and flag_target:
 				pos_frame = cap_source.get(cv2.CAP_PROP_POS_FRAMES)
-				if pos_frame == 1:
+				print ''
+				print pos_frame
+				if pos_frame == 1 or True:
 					#showBGRimage(source_frame)
 					#showBGRimage(target_frame)
 					points1 = face_detection.landmark_detect(source_frame)
 					points2 = face_detection.landmark_detect(target_frame)
+
+					print (len(points1))
+					print (len(points2))
+
+					if len(points1) == 0 or len(points2) == 0:
+						continue
+
+					# visualizeFeatures(source_frame, points1)
+					# visualizeFeatures(target_frame, points2)
 
 					# Find convex hull
 					hull1 = []
 					hull2 = []
 
 					hullIndex = cv2.convexHull(np.array(points2), returnPoints=False)
+					# pdb.set_trace()
 
 					for i in xrange(0, len(hullIndex)):
 						hull1.append(points1[int(hullIndex[i])])
 						hull2.append(points2[int(hullIndex[i])])
-					#visualizeFeatures(source_frame, hull1)
+					# visualizeFeatures(source_frame, hull1)
+					# visualizeFeatures(target_frame, hull2)
+
 					# Find delanauy traingulation for convex hull points
 					sizeImg2 = target_frame.shape
 					rect = (0, 0, sizeImg2[1], sizeImg2[0])
 
-					dt = calculateDelaunayTriangles(rect, hull2)
+					dt = calculateDelaunayTriangles(rect, hull2, target_frame)
 
 					if len(dt) == 0:
-						quit()
+						print 'No delaunay'
+						continue
 
 					# Apply affine transformation to Delaunay triangles
 					for i in xrange(0, len(dt)):
@@ -81,9 +104,9 @@ if __name__ == "__main__":
 
 					# Clone seamlessly.
 					output = cv2.seamlessClone(np.uint8(img1Warped), target_frame, mask, center, cv2.NORMAL_CLONE)
-					showBGRimage(output)
-					cv2.imshow("Face Swapped", output)
-					#out.write(input_frame)
+					# showBGRimage(output)
+					# cv2.imshow("Face Swapped", output)
+					out.write(output)
 				else:
 					break
 					print str(pos_frame) + " frames"

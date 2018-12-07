@@ -6,7 +6,11 @@ import pdb
 
 def landmark_detect(img):
     face_landmarks_list = face_recognition.face_landmarks(img)
-    #pdb.set_trace()
+    # pdb.set_trace()
+
+    if len(face_landmarks_list) == 0:
+        return []
+
     values = []
     for key, value in face_landmarks_list[0].items():
         for ent in value:
