@@ -32,9 +32,7 @@ def convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_lan
     for i in xrange(0, len(hullIndex)):
         hull1.append(points1[int(hullIndex[i])])
         hull2.append(points2[int(hullIndex[i])])
-    print (len(hull2))
     features = ['left_eye', 'right_eye', 'nose_bridge', 'nose_tip', 'top_lip']
     for feature in features:
         add_point(feature, face_landmarks_dict_1, face_landmarks_dict_2, hull1, hull2)
-    print (len(hull2))
     return hull1, hull2

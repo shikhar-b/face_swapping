@@ -14,8 +14,8 @@ from cloning import cloning
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -31,7 +31,7 @@ if __name__ == "__main__":
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
 	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
-	limit = 10
+	limit = 1000
 	start = time.time()
 	try:
 		while True:
@@ -50,8 +50,8 @@ if __name__ == "__main__":
 
 					if empty_points(points1, points2, 1): continue
 
-					#visualizeFeatures(source_frame, points1)
-					#visualizeFeatures(target_frame, points2)
+					# visualizeFeatures(source_frame, points1)
+					# visualizeFeatures(target_frame, points2)
 
 					# STEP 2: Convex Hull
 
