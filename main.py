@@ -14,8 +14,8 @@ from cloning import cloning
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 				if pos_frame == 1 or True:
 
 					#STEP 1: Landmark Detection
-					face_landmarks_dict_1,face_landmarks_dict_2, points1 , points2 = face_detection.landmark_detect_clahe(source_frame, target_frame)
+					face_landmarks_dict_1,face_landmarks_dict_2, points1 , points2 = face_detection.landmark_detect_clahe2(source_frame, target_frame)
 
 					if empty_points(points1, points2, 1): continue
 
@@ -60,7 +60,10 @@ if __name__ == "__main__":
 					# visualizeFeatures(source_frame, hull1)
 					if empty_points(hull1, hull2, 2): continue
 
-
+					hull2 = np.asarray(hull2)
+					hull2[:, 0] = np.clip(hull2[:, 0], 0, target_frame.shape[1] - 1)
+					hull2[:, 1] = np.clip(hull2[:, 1], 0, target_frame.shape[0] - 1)
+					hull2 = listOfListToTuples(hull2.astype(np.int32).tolist())
 
 
 					# STEP 3: Triangulation

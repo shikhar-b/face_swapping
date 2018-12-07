@@ -7,16 +7,16 @@ import logging, time
 from helpers import *
 import face_detection
 import face_recognition
-from convex_hull import convex_hull
-from triangulation import triangulation
-from warping import warping
-from cloning import cloning
+from convex_hull import *
+from triangulation import *
+from warping import *
+from cloning import *
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -47,7 +47,7 @@ def loadVideo(path):
 	cap_source.release()
 	return video
 
-def saveVideo(video, path = 'output.avi'):
+def saveVideo(video, path = 'outputMultiple.avi'):
 	if len(video) > 0:
 		frame_height, frame_width, channels = video[0].shape
 		out = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
@@ -92,13 +92,15 @@ if __name__ == "__main__":
 		img1Warped = np.copy(tf)
 
 		#STEP 1: Landmark Detection
-		points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
+		# points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
+		fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe(sf, tf)
 		if empty_points(points1, points2, 1): continue
 		#visualizeFeatures(sf, points1)
 		#visualizeFeatures(tf, points2)
 
 		# STEP 2: Convex Hull
-		hull1, hull2 = convex_hull(points1, points2)
+		# hull1, hull2 = convex_hull(points1, points2)
+		hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
 		# visualizeFeatures(sf, hull1)
 		if empty_points(hull1, hull2, 2): continue
 

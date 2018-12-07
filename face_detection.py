@@ -21,6 +21,30 @@ def landmark_detect(source_image, target_image):
 
     return face_landmarks_list_1[0], face_landmarks_list_2[0], listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
+def landmark_detect_clahe2_helper(img):
+    #-----Converting image to LAB Color model----------------------------------- 
+    lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+
+    #-----Splitting the LAB image to different channels-------------------------
+    l, a, b = cv2.split(lab)
+
+    #-----Applying CLAHE to L-channel-------------------------------------------
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
+    cl = clahe.apply(l)
+
+    #-----Merge the CLAHE enhanced L-channel with the a and b channel-----------
+    limg = cv2.merge((cl,a,b))
+
+    #-----Converting image from LAB Color model to RGB model--------------------
+    final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+    # showBGRimage(final)
+    return final
+
+def landmark_detect_clahe2(source_image, target_image):
+    si = landmark_detect_clahe2_helper(source_image)
+    ti = landmark_detect_clahe2_helper(target_image)
+    return landmark_detect(si, ti)
+
 def landmark_detect_clahe(source_image, target_image):
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     source_gray = convert_BGR2Gray(source_image)
