@@ -10,15 +10,16 @@ from convex_hull import convex_hull, convex_hull_internal_points
 from triangulation import triangulation
 from warping import warping
 from cloning import cloning
+from opticalFlow import *
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Easy/JonSnow.mp4'
+TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -47,7 +48,7 @@ if __name__ == "__main__":
 				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				print ''
 				print pos_frame
-				if pos_frame == 1 or True:
+				if (pos_frame-1) % 5 == 0 or True:
 
 					#STEP 1: Landmark Detection
 					try:
@@ -88,6 +89,7 @@ if __name__ == "__main__":
 					#showBGRimage(output)
 					# cv2.imshow("Face Swapped", output)
 					out.write(output)
+					prev_target_frame = target_frame
 
 					if pos_frame == limit:
 						print ('time taken :' + str(time.time() - start))
@@ -97,8 +99,16 @@ if __name__ == "__main__":
 						out.release()
 						exit()
 				else:
-					break
-					print str(pos_frame) + " frames"
+					try:
+						output, points2 = doOpticalFlow(output, points2, target_frame, prev_target_frame)
+						out.write(output)
+						prev_target_frame = target_frame
+					except KeyboardInterrupt:
+						sys.exit()
+					except:
+						print (traceback.format_exc())
+						exit()
+						continue
 			else:
 				if flag_source:
 					videoSpecific2(cap_source, pos_frame)

@@ -88,7 +88,10 @@ if __name__ == "__main__":
 	points1 = []
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
-		target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
+		try:
+			target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
+		except:
+			continue
 		distance = face_recognition.face_distance(source_video_encodings, target_frame_encoding)
 		
 		sf = source_video[np.argmin(distance)]
