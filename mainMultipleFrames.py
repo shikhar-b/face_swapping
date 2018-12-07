@@ -15,8 +15,8 @@ from cloning import cloning
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -57,10 +57,19 @@ def saveVideo(video, path = 'output.avi'):
 	else:
 		print ('No video to write')
 
+def showFrame(video, frameNum):
+	tf = video[frameNum]
+	points1, points2 = face_detection.landmark_detect_clahe(tf, tf)
+	# visualizeFeatures(sf, points1)
+	visualizeFeatures(tf, points2)
+
 if __name__ == "__main__":
 
 	source_video = loadVideo(SOURCE_PATH)
 	target_video = loadVideo(TARGET_PATH)
+
+	# showFrame(target_video, 100)
+	# exit()
 
 	print ('Videos loaded')
 	print ('Starting source video encoding')
@@ -83,7 +92,7 @@ if __name__ == "__main__":
 		img1Warped = np.copy(tf)
 
 		#STEP 1: Landmark Detection
-		points1, points2 = face_detection.landmark_detect(sf, tf)
+		points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
 		if empty_points(points1, points2, 1): continue
 		#visualizeFeatures(sf, points1)
 		#visualizeFeatures(tf, points2)

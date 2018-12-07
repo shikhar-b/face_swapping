@@ -1,4 +1,4 @@
-import cv2
+import cv2, numpy as np
 from helpers import *
 
 def triangulation(target_frame, hull2):

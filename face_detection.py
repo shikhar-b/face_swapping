@@ -18,7 +18,8 @@ def landmark_detect(source_image, target_image):
     points_1 = np.array(points_1).astype(np.int32)
     points_2 = np.array(points_2).astype(np.int32)
 
-    return listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
+
+    return face_landmarks_list_1[0], face_landmarks_list_2[0], listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
 def landmark_detect_clahe(source_image, target_image):
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -41,3 +42,4 @@ def intersect(face_landmarks_1, face_landmarks_2):
                 points_2.extend(value_2)
 
     return points_1,points_2
+
