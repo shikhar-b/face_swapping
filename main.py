@@ -3,7 +3,7 @@ import numpy as np
 import pdb
 import matplotlib.pyplot as plt
 import traceback
-import logging
+import logging, time
 from helpers import *
 import face_detection
 from convex_hull import convex_hull
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	frame_height = int(cap_target.get(4))
 	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 10, (frame_width, frame_height))
 
-
+	start = time.time()
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 					if empty_points(points1, points2, 1): continue
 
 					#visualizeFeatures(source_frame, points1)
-
+					#visualizeFeatures(target_frame, points2)
 
 					# STEP 2: Convex Hull
 
@@ -92,6 +92,7 @@ if __name__ == "__main__":
 	except Exception as e:
 		print (traceback.format_exc())
 
+	print ('time taken :' + str(time.time() - start))
 	cv2.destroyAllWindows()
 	cap_source.release()
 	cap_target.release()

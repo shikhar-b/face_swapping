@@ -93,3 +93,7 @@ def empty_points(points1, points2, step):
 		return True
 
 	return False
+
+def convert_BGR2Gray(img):
+	img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	return img

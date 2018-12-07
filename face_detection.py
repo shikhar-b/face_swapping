@@ -20,6 +20,16 @@ def landmark_detect(source_image, target_image):
 
     return listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
+def landmark_detect_clahe(source_image, target_image):
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    source_gray = convert_BGR2Gray(source_image)
+    target_gray = convert_BGR2Gray(target_image)
+
+    cl1 = clahe.apply(source_gray)
+    cl2 = clahe.apply(target_gray)
+
+    landmark_detect(cl1, cl2)
+
 def intersect(face_landmarks_1, face_landmarks_2):
     points_1,points_2 = [],[]
 
