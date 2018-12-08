@@ -79,7 +79,11 @@ def visualizeFeatures(colorImg, p):
 def listOfListToTuples(p):
 	t_list = []
 	for ent in p:
-		t_list.append((ent[0], ent[1]))
+		s = []
+		for i in range(0, len(ent)):
+			s.append(ent[i])
+		t_list.append(tuple(s))
+
 	return t_list
 
 def empty_points(points1, points2, step):
