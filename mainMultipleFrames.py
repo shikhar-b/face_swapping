@@ -19,8 +19,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -38,7 +38,7 @@ def loadVideo(path):
 				pos_frame = cap_source.get(cv2.CAP_PROP_POS_FRAMES)
 				video.append(source_frame)
 
-			# if pos_frame > 10:
+			# if pos_frame > 20:
 			# 	break
 
 			if cv2.waitKey(10) == 27 or cap_source.get(cv2.CAP_PROP_POS_FRAMES) == cap_source.get(cv2.CAP_PROP_FRAME_COUNT):
@@ -67,21 +67,73 @@ def showFrame(video, frameNum):
 	# visualizeFeatures(sf, points1)
 	visualizeFeatures(tf, points2)
 
+#####################################################################################################
+
+def getAllEncodings1(video):
+	source_video_encodings = []
+	numJitters = 3
+	for frame in video:
+		encoding = face_recognition.face_encodings(frame, num_jitters=numJitters)
+		source_video_encodings.append(encoding[0]) # assuming only one face per video
+
+	return source_video_encodings
+
+def getClosestSourceFrame1(sourceEncodings, sourceVideo, targetFrame):
+	numJitters = 3
+	target_frame_encoding = face_recognition.face_encodings(targetFrame, num_jitters=numJitters)[0]
+	distance = face_recognition.face_distance(sourceEncodings, target_frame_encoding)	
+	sf = sourceVideo[np.argmin(distance)]
+	return sf
+
+#####################################################################################################
+
+def getFrameFeatures(frame):
+	f = face_detection.landmark_detect_clahe2_helper(frame)
+	landmarks = face_recognition.face_landmarks(f)
+	# visualizeFeatures(frame, np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T)
+
+	leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)
+	rightEyeLoc = np.asarray(landmarks[0]['right_eye'][3]).astype(np.int32)[:, None].T.astype(np.float32)
+	noseTipLoc = np.asarray(landmarks[0]['nose_tip'][2]).astype(np.int32)[:, None].T.astype(np.float32)
+
+	feature = np.abs(np.sum(np.square(noseTipLoc - leftEyeLoc))) / np.abs(np.sum(np.square(noseTipLoc - rightEyeLoc)))
+	return feature
+
+def getFeatureDistance(f1, f2):
+	return np.abs(f1 - f2)
+
+def getAllEncodings(video):
+	source_video_encodings = []
+	for frame in video:
+		features = getFrameFeatures(frame)
+		source_video_encodings.append(features)
+
+	return source_video_encodings
+
+def getClosestSourceFrame(sourceEncodings, sourceVideo, targetFrame):
+	targetFeatures = getFrameFeatures(targetFrame)
+
+	minDis = 999999999
+	minIndex = 0
+	for i, sf in enumerate(sourceEncodings):
+		d = getFeatureDistance(sf, targetFeatures)
+
+		if d < minDis:
+			minDis = d
+			minIndex = i
+
+	return sourceVideo[minIndex]
+
+#####################################################################################################
+
 if __name__ == "__main__":
 
 	source_video = loadVideo(SOURCE_PATH)
 	target_video = loadVideo(TARGET_PATH)
 
-	# showFrame(target_video, 70)
-	# exit()
-
 	print ('Videos loaded')
 	print ('Starting source video encoding')
-	source_video_encodings = []
-	numJitters = 3
-	for frame in source_video:
-		encoding = face_recognition.face_encodings(frame, num_jitters=numJitters)
-		source_video_encodings.append(encoding[0]) # assuming only one face per video
+	source_video_encodings = getAllEncodings(source_video)
 	print ('Source video encodings found')
 
 	print ('Starting to make target video')
@@ -90,32 +142,33 @@ if __name__ == "__main__":
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
 
-		if frameNum % 5 == 0:
+		if frameNum % 4 == 0:
 			try:
-				target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
+				sf = getClosestSourceFrame(source_video_encodings, source_video, target_frame)
 			except:
 				continue
-			distance = face_recognition.face_distance(source_video_encodings, target_frame_encoding)
-			
-			sf = source_video[np.argmin(distance)]
+
 			tf = target_frame
 			img1Warped = np.copy(tf)
 
 			#STEP 1: Landmark Detection
-			# points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
 			try:
 				fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe2(sf, tf)
+			except KeyboardInterrupt:
+				sys.exit()
 			except:
 				if len(points1) == 0:
 					continue
 			if empty_points(points1, points2, 1): continue
-			#visualizeFeatures(sf, points1)
-			#visualizeFeatures(tf, points2)
 
 			# STEP 2: Convex Hull
-			# hull1, hull2 = convex_hull(points1, points2)
-			hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
-			# visualizeFeatures(sf, hull1)
+			try:
+				hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
+			except KeyboardInterrupt:
+				sys.exit()
+			except:
+				print (traceback.format_exc())
+				continue
 			if empty_points(hull1, hull2, 2): continue
 
 			hull2 = np.asarray(hull2)
@@ -146,7 +199,6 @@ if __name__ == "__main__":
 				sys.exit()
 			except:
 				print (traceback.format_exc())
-				exit()
 				continue
 
 	saveVideo(output_video)
