@@ -18,8 +18,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 #SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 #TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -34,10 +34,11 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	out = cv2.VideoWriter('output_try.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
 	points1 = []
+	jump = 70
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
@@ -46,9 +47,13 @@ if __name__ == "__main__":
 
 			if flag_source and flag_target:
 				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
+				# while pos_frame!=jump:
+				# 	flag_target, target_frame = cap_target.read()
+				# 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
+				# 	img1Warped = np.copy(target_frame)
 				print ''
 				print pos_frame
-				if (pos_frame-1) % 5 == 0:
+				if (pos_frame-1) % 5 == 0 or True:
 
 					#STEP 1: Landmark Detection
 					try:
@@ -80,7 +85,7 @@ if __name__ == "__main__":
 					if len(dt) == 0:
 						logging.info('delaunay triangulation empty')
 						continue
-
+					print('len dt :' +str(len(dt)))
 					# STEP 4: Warping
 					warping(dt, hull1, hull2, source_frame, img1Warped)
 

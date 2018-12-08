@@ -44,11 +44,12 @@ def calculateDelaunayTriangles(rect, points, img):
 			# Get face-points (from 68 face detector) by coordinates
 			for j in xrange(0, 3):
 				for k in xrange(0, len(points)):
-					if (abs(pt[j][0] - points[k][0]) < 1.0 and abs(pt[j][1] - points[k][1]) < 1.0):
-						ind.append(k)
+					#if (abs(pt[j][0] - points[k][0]) < 1.0 and abs(pt[j][1] - points[k][1]) < 1.0):
+					ind.append(k)
 					# Three points form a triangle. Triangle array corresponds to the file tri.txt in FaceMorph
 			if len(ind) == 3:
 				delaunayTri.append((ind[0], ind[1], ind[2]))
+
 
 		pt = []
 

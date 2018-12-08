@@ -46,9 +46,9 @@ def rectContains(rect, point):
 		return False
 	elif point[1] < rect[1]:
 		return False
-	elif point[0] > rect[2]:
+	elif point[0] > rect[0] + rect[2]:
 		return False
-	elif point[1] > rect[3]:
+	elif point[1] > rect[1] + rect[3]:
 		return False
 	return True
 
