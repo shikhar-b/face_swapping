@@ -13,7 +13,7 @@ from cloning import cloning
 from opticalFlow import *
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
+TARGET_PATH = 'datasets/Easy/JonSnow.mp4'
 
 #SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 #TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
@@ -70,8 +70,13 @@ if __name__ == "__main__":
 
 					# STEP 2: Convex Hull
 
-
-					hull1, hull2 = convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_landmarks_dict_2)
+					try:
+						hull1, hull2 = convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_landmarks_dict_2)
+					except KeyboardInterrupt:
+						sys.exit()
+					except:
+						print (traceback.format_exc())
+						continue
 					# visualizeFeatures(source_frame, hull1)
 					if empty_points(hull1, hull2, 2): continue
 
@@ -113,7 +118,6 @@ if __name__ == "__main__":
 						sys.exit()
 					except:
 						print (traceback.format_exc())
-						exit()
 						continue
 			else:
 				if flag_source:
