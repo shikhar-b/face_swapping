@@ -4,8 +4,13 @@ import pdb
 import matplotlib.pyplot as plt
 import traceback
 import logging, time
+from cloning import cloning
+from convex_hull import convex_hull
 from skimage.transform import SimilarityTransform, matrix_transform
 from helpers import *
+from convex_hull import convex_hull
+from triangulation import triangulation
+from warping import warping
 
 # Parameters for lucas kanade optical flow
 lk_params = dict( winSize  = (15,15),
@@ -43,8 +48,10 @@ def doOpticalFlow(prevOutput, targetPoints, target_frame, prev_target_frame):
 	if transform.estimate(good_old, good_new):
 		homography = transform.params
 		# newBbox[i] = transformation(homography, bbox[i])
-
+		#pdb.set_trace()
 		# get hull from these new points in the new target frame
+
+		newOutput = step225(good_old, good_new, prevOutput, target_frame)
 
 		# make a convex fill mask inside this hull
 
@@ -55,7 +62,32 @@ def doOpticalFlow(prevOutput, targetPoints, target_frame, prev_target_frame):
 		# do seamless cloning or may not be required..
 
 
-		pdb.set_trace()
 
 
 	return newOutput, listOfListToTuples(good_new.tolist())
+
+def step225(points1, points2, img1, img2):
+	img1Warped = np.copy(img2)
+
+	hull1, hull2 = convex_hull(points1, points2)
+	# visualizeFeatures(source_frame, hull1)
+	if empty_points(hull1, hull2, 2): return img2
+
+	hull2 = np.asarray(hull2)
+	hull2[:, 0] = np.clip(hull2[:, 0], 0, img2.shape[1] - 1)
+	hull2[:, 1] = np.clip(hull2[:, 1], 0, img2.shape[0] - 1)
+	hull2 = listOfListToTuples(hull2.astype(np.float32).tolist())
+
+	# STEP 3: Triangulation
+	dt = triangulation(img2, hull2)
+	if len(dt) == 0:
+		logging.info('delaunay triangulation empty')
+		return img2
+
+	# STEP 4: Warping
+	warping(dt, hull1, hull2, img1, img1Warped)
+
+	# STEP 5: Cloning
+	output = cloning(img1Warped, img2, hull2)
+
+	return output

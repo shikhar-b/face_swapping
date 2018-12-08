@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import pdb
+import pdb, sys
 import matplotlib.pyplot as plt
 import traceback
 import logging, time
@@ -15,8 +15,8 @@ from opticalFlow import *
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+#SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+#TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 		while True:
 			flag_source, source_frame = cap_source.read()
 			flag_target, target_frame = cap_target.read()
-			img1Warped = np.copy(target_frame);
+			img1Warped = np.copy(target_frame)
 
 			if flag_source and flag_target:
 				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
