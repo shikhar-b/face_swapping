@@ -16,8 +16,8 @@ from opticalFlow import *
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
-# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
 # SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
@@ -92,11 +92,13 @@ def getFrameFeatures(frame):
 	landmarks = face_recognition.face_landmarks(f)
 	# visualizeFeatures(frame, np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T)
 
-	leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)
-	rightEyeLoc = np.asarray(landmarks[0]['right_eye'][3]).astype(np.int32)[:, None].T.astype(np.float32)
-	noseTipLoc = np.asarray(landmarks[0]['nose_tip'][2]).astype(np.int32)[:, None].T.astype(np.float32)
-
-	feature = np.abs(np.sum(np.square(noseTipLoc - leftEyeLoc))) / np.abs(np.sum(np.square(noseTipLoc - rightEyeLoc)))
+	try:
+		leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)
+		rightEyeLoc = np.asarray(landmarks[0]['right_eye'][3]).astype(np.int32)[:, None].T.astype(np.float32)
+		noseTipLoc = np.asarray(landmarks[0]['nose_tip'][2]).astype(np.int32)[:, None].T.astype(np.float32)
+		feature = np.abs(np.sum(np.square(noseTipLoc - leftEyeLoc))) / np.abs(np.sum(np.square(noseTipLoc - rightEyeLoc)))
+	except:
+		feature = -999999999
 	return feature
 
 def getFeatureDistance(f1, f2):
