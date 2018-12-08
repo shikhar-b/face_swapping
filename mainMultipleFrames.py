@@ -72,8 +72,8 @@ if __name__ == "__main__":
 	source_video = loadVideo(SOURCE_PATH)
 	target_video = loadVideo(TARGET_PATH)
 
-	showFrame(target_video, 70)
-	exit()
+	# showFrame(target_video, 70)
+	# exit()
 
 	print ('Videos loaded')
 	print ('Starting source video encoding')
