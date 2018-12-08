@@ -90,7 +90,9 @@ def step225(points1, points2, img1, img2):
 	# STEP 4: Warping
 	warping(dt, hull1, hull2, img1, img1Warped)
 
-	# STEP 5: Cloning
-	output = cloning(img1Warped, img2, hull2)
+	return img1Warped
 
-	return output
+	# # STEP 5: Cloning
+	# output = cloning(img1Warped, img2, hull2)
+
+	# return output

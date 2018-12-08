@@ -52,7 +52,7 @@ if __name__ == "__main__":
 				# 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				# 	img1Warped = np.copy(target_frame)
 				print pos_frame
-				if (pos_frame-1) % 150 == 0 :
+				if (pos_frame-1) % 3 == 0 :
 
 					#STEP 1: Landmark Detection
 					try:
