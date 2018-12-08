@@ -48,7 +48,7 @@ if __name__ == "__main__":
 				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				print ''
 				print pos_frame
-				if (pos_frame-1) % 5 == 0 or True:
+				if (pos_frame-1) % 5 == 0:
 
 					#STEP 1: Landmark Detection
 					try:
