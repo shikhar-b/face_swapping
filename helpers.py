@@ -89,11 +89,11 @@ def listOfListToTuples(p):
 def empty_points(points1, points2, step):
 	if len(points1) == 0 or len(points2) == 0:
 		if len(points1) == 0 and len(points2) == 0:
-			logging.info(str(step) + ' points1 and points2 empty')
+			print(str(step) + ' points1 and points2 empty')
 		elif len(points1) == 0:
-			logging.info(str(step) + 'points1 empty')
+			print(str(step) + 'points1 empty')
 		else:
-			logging.info(str(step) + 'points2 empty')
+			print(str(step) + 'points2 empty')
 		return True
 
 	return False
