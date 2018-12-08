@@ -1,4 +1,5 @@
 import cv2, numpy as np
+import random
 from helpers import *
 
 def triangulation(target_frame, hull2):
@@ -31,6 +32,7 @@ def calculateDelaunayTriangles(rect, points, img):
 	pt = []
 
 	for t in triangleList:
+		imgToShow = np.copy(img)
 		pt.append((t[0], t[1]))
 		pt.append((t[2], t[3]))
 		pt.append((t[4], t[5]))
@@ -44,13 +46,43 @@ def calculateDelaunayTriangles(rect, points, img):
 			# Get face-points (from 68 face detector) by coordinates
 			for j in xrange(0, 3):
 				for k in xrange(0, len(points)):
-					#if (abs(pt[j][0] - points[k][0]) < 1.0 and abs(pt[j][1] - points[k][1]) < 1.0):
-					ind.append(k)
+					if (abs(pt[j][0] - points[k][0]) < 1.0 and abs(pt[j][1] - points[k][1]) < 1.0):
+						ind.append(k)
 					# Three points form a triangle. Triangle array corresponds to the file tri.txt in FaceMorph
-			if len(ind) == 3:
+			if len(ind)==3:
 				delaunayTri.append((ind[0], ind[1], ind[2]))
+			elif len(ind) > 3:
+				ind = best_solution(ind,3, 5)
+				delaunayTri.append((ind[0], ind[1], ind[2]))
+			else:
+				print('Missed this one')
+				visualizeFeatures(imgToShow,points)
+				showBGRimage(imgToShow)
 
 
 		pt = []
 
 	return delaunayTri
+
+def evaluate_solution(solution_set):
+    return sum([distance(a, b) for a, b in zip(solution_set[:-1], solution_set[1:])])
+
+def best_solution(points, k, tries):
+    solution_sets = [incremental_farthest_search(points, k) for _ in range(tries)]
+    sorted_solutions = sorted(solution_sets, key=evaluate_solution, reverse=False)
+    return sorted_solutions[0]
+
+def incremental_farthest_search(points, k):
+    remaining_points = points[:]
+    solution_set = []
+    solution_set.append(remaining_points.pop(random.randint(0, len(remaining_points) - 1)))
+    for _ in range(k-1):
+        distances = [distance(p, solution_set[0]) for p in remaining_points]
+        for i, p in enumerate(remaining_points):
+            for j, s in enumerate(solution_set):
+                distances[i] = min(distances[i], distance(p, s))
+        solution_set.append(remaining_points.pop(distances.index(max(distances))))
+    return solution_set
+
+def distance(A, B):
+    return abs(A - B)

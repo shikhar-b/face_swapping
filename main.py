@@ -18,8 +18,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 #SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 #TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+SOURCE_PATH= 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -58,6 +58,8 @@ if __name__ == "__main__":
 					#STEP 1: Landmark Detection
 					try:
 						face_landmarks_dict_1, face_landmarks_dict_2, points1, points2 = face_detection.landmark_detect_clahe2(source_frame, target_frame)
+					except KeyboardInterrupt:
+						sys.exit()
 					except:
 						if len(points1) == 0:
 							continue
@@ -91,7 +93,7 @@ if __name__ == "__main__":
 
 					# STEP 5: Cloning
 					output = cloning(img1Warped, target_frame, hull2)
-					#showBGRimage(output)
+
 					# cv2.imshow("Face Swapped", output)
 					out.write(output)
 					prev_target_frame = target_frame

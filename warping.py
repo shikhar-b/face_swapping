@@ -42,7 +42,6 @@ def warpTriangle(img1, img2, t1, t2):
 	size = (r2[2], r2[3])
 
 	img2Rect = applyAffineTransform(img1Rect, t1Rect, t2Rect, size)
-	print (img2Rect.size)
 	img2Rect = img2Rect * mask
 
 	# Copy triangular region of the rectangular patch to the output image
@@ -51,7 +50,6 @@ def warpTriangle(img1, img2, t1, t2):
 
 	img2[r2[1]:r2[1] + r2[3], r2[0]:r2[0] + r2[2]] = img2[r2[1]:r2[1] + r2[3], r2[0]:r2[0] + r2[2]] + img2Rect
 
-	showBGRimage(img2)
 # Apply affine transform calculated using srcTri and dstTri to src and
 # output an image of size.
 def applyAffineTransform(src, srcTri, dstTri, size):
