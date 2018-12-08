@@ -11,6 +11,7 @@ from convex_hull import *
 from triangulation import *
 from warping import *
 from cloning import *
+from opticalFlow import *
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
@@ -62,7 +63,7 @@ def saveVideo(video, path = 'outputMultiple.avi'):
 
 def showFrame(video, frameNum):
 	tf = video[frameNum]
-	points1, points2 = face_detection.landmark_detect_clahe(tf, tf)
+	fld1, fld2, points1, points2 = face_detection.landmark_detect_clahe2(tf, tf)
 	# visualizeFeatures(sf, points1)
 	visualizeFeatures(tf, points2)
 
@@ -71,8 +72,8 @@ if __name__ == "__main__":
 	source_video = loadVideo(SOURCE_PATH)
 	target_video = loadVideo(TARGET_PATH)
 
-	# showFrame(target_video, 100)
-	# exit()
+	showFrame(target_video, 70)
+	exit()
 
 	print ('Videos loaded')
 	print ('Starting source video encoding')
@@ -88,50 +89,64 @@ if __name__ == "__main__":
 	points1 = []
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
-		try:
-			target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
-		except:
-			continue
-		distance = face_recognition.face_distance(source_video_encodings, target_frame_encoding)
-		
-		sf = source_video[np.argmin(distance)]
-		tf = target_frame
-		img1Warped = np.copy(tf)
 
-		#STEP 1: Landmark Detection
-		# points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
-		try:
-			fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe(sf, tf)
-		except:
-			if len(points1) == 0:
+		if frameNum % 5 == 0:
+			try:
+				target_frame_encoding = face_recognition.face_encodings(target_frame, num_jitters=numJitters)[0]
+			except:
 				continue
-		if empty_points(points1, points2, 1): continue
-		#visualizeFeatures(sf, points1)
-		#visualizeFeatures(tf, points2)
+			distance = face_recognition.face_distance(source_video_encodings, target_frame_encoding)
+			
+			sf = source_video[np.argmin(distance)]
+			tf = target_frame
+			img1Warped = np.copy(tf)
 
-		# STEP 2: Convex Hull
-		# hull1, hull2 = convex_hull(points1, points2)
-		hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
-		# visualizeFeatures(sf, hull1)
-		if empty_points(hull1, hull2, 2): continue
+			#STEP 1: Landmark Detection
+			# points1, points2 = face_detection.landmark_detect_clahe(sf, tf)
+			try:
+				fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe2(sf, tf)
+			except:
+				if len(points1) == 0:
+					continue
+			if empty_points(points1, points2, 1): continue
+			#visualizeFeatures(sf, points1)
+			#visualizeFeatures(tf, points2)
 
-		hull2 = np.asarray(hull2)
-		hull2[:, 0] = np.clip(hull2[:, 0], 0, target_frame.shape[1] - 1)
-		hull2[:, 1] = np.clip(hull2[:, 1], 0, target_frame.shape[0] - 1)
-		hull2 = listOfListToTuples(hull2.astype(np.int32).tolist())
+			# STEP 2: Convex Hull
+			# hull1, hull2 = convex_hull(points1, points2)
+			hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
+			# visualizeFeatures(sf, hull1)
+			if empty_points(hull1, hull2, 2): continue
 
-		# STEP 3: Triangulation
-		dt = triangulation(tf, hull2)
-		if len(dt) == 0:
-			logging.info('delaunay triangulation empty')
-			continue
+			hull2 = np.asarray(hull2)
+			hull2[:, 0] = np.clip(hull2[:, 0], 0, target_frame.shape[1] - 1)
+			hull2[:, 1] = np.clip(hull2[:, 1], 0, target_frame.shape[0] - 1)
+			hull2 = listOfListToTuples(hull2.astype(np.int32).tolist())
 
-		# STEP 4: Warping
-		warping(dt, hull1, hull2, sf, img1Warped)
+			# STEP 3: Triangulation
+			dt = triangulation(tf, hull2)
+			if len(dt) == 0:
+				logging.info('delaunay triangulation empty')
+				continue
 
-		# STEP 5: Cloning
-		output = cloning(img1Warped, tf, hull2)
+			# STEP 4: Warping
+			warping(dt, hull1, hull2, sf, img1Warped)
 
-		output_video.append(output)
+			# STEP 5: Cloning
+			output = cloning(img1Warped, tf, hull2)
+
+			output_video.append(output)
+			prev_target_frame = target_frame
+		else:
+			try:
+				output, points2 = doOpticalFlow(output, points2, target_frame, prev_target_frame)
+				output_video.append(output)
+				prev_target_frame = target_frame
+			except KeyboardInterrupt:
+				sys.exit()
+			except:
+				print (traceback.format_exc())
+				exit()
+				continue
 
 	saveVideo(output_video)
