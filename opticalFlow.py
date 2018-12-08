@@ -3,9 +3,9 @@ import numpy as np
 import pdb
 import matplotlib.pyplot as plt
 import traceback
-import logging, time
+import logging, time, face_detection
 from cloning import cloning
-from convex_hull import convex_hull
+from convex_hull import convex_hull, convex_hull_internal_points
 from skimage.transform import SimilarityTransform, matrix_transform
 from helpers import *
 from convex_hull import convex_hull
@@ -68,9 +68,12 @@ def doOpticalFlow(prevOutput, targetPoints, target_frame, prev_target_frame):
 
 def step225(points1, points2, img1, img2):
 	img1Warped = np.copy(img2)
+	#face_landmarks_dict_1, face_landmarks_dict_2, points1, points2 = face_detection.landmark_detect_clahe2(img1,img2)
 
 	hull1, hull2 = convex_hull(points1, points2)
-	# visualizeFeatures(source_frame, hull1)
+	# visualizeFeatures(img1, hull1)
+	# visualizeFeatures(img2, hull2)
+	#pdb.set_trace()
 	if empty_points(hull1, hull2, 2): return img2
 
 	hull2 = np.asarray(hull2)

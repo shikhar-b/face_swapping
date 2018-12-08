@@ -1,4 +1,4 @@
-import cv2, numpy as np
+import cv2, numpy as np, pdb
 
 def convex_hull(points1, points2):
     # Find convex hull
@@ -26,8 +26,9 @@ def convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_lan
     hull1 = []
     hull2 = []
 
-    hullIndex = cv2.convexHull(np.array(points2), returnPoints=False)
     # pdb.set_trace()
+    print (len(points2))
+    hullIndex = cv2.convexHull(np.array(points2), returnPoints=False)
 
     for i in xrange(0, len(hullIndex)):
         hull1.append(points1[int(hullIndex[i])])

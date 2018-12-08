@@ -18,8 +18,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 #SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 #TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-# TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-# SOURCE_PATH= 'datasets/Medium/LucianoRosso1.mp4'
+# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+# TARGET_PATH= 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 	limit = 1000
 	start = time.time()
 	points1 = []
-	jump = 70
+	jump = 137
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
@@ -47,12 +47,12 @@ if __name__ == "__main__":
 
 			if flag_source and flag_target:
 				pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
-				# while pos_frame!=jump:
+				# while pos_frame<jump:
 				# 	flag_target, target_frame = cap_target.read()
 				# 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				# 	img1Warped = np.copy(target_frame)
 				print pos_frame
-				if (pos_frame-1) % 4 == 0:
+				if (pos_frame-1) % 150 == 0 :
 
 					#STEP 1: Landmark Detection
 					try:
