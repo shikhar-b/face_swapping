@@ -18,8 +18,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 #SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 #TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-SOURCE_PATH= 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+# SOURCE_PATH= 'datasets/Medium/LucianoRosso1.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output_try.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
 	points1 = []
@@ -51,9 +51,8 @@ if __name__ == "__main__":
 				# 	flag_target, target_frame = cap_target.read()
 				# 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				# 	img1Warped = np.copy(target_frame)
-				print ''
 				print pos_frame
-				if (pos_frame-1) % 5 == 0 or True:
+				if (pos_frame-1) % 4 == 0:
 
 					#STEP 1: Landmark Detection
 					try:
