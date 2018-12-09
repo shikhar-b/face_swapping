@@ -21,6 +21,32 @@ def landmark_detect(source_image, target_image):
 
     return face_landmarks_list_1[0], face_landmarks_list_2[0], listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
+def landmark_detect_dual(source_image, target_image):
+    face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
+    face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
+    face_landmarks_list_2.append(face_landmarks_list_2.pop(0))
+    # pdb.set_trace()
+
+    if len(face_landmarks_list_1) == 0 or len(face_landmarks_list_2) == 0:
+        return []
+
+    points_source = []
+    points_target = []
+    total_faces = len(face_landmarks_list_1)
+    for face_no in range(0, total_faces):
+        points_1, points_2 = intersect(face_landmarks_list_1[face_no], face_landmarks_list_2[face_no])
+        points_source.append(points_1)
+        points_target.append(points_2)
+
+    #visualizeFeatures(img, (values[:, 0], values[:, 1]))
+    points_source = np.array(points_source).astype(np.int32)
+    points_target = np.array(points_target).astype(np.int32)
+
+    points_source = [listOfListToTuples(points.tolist()) for points in points_source]
+    points_target = [listOfListToTuples(points.tolist()) for points in points_target]
+
+    return face_landmarks_list_1, face_landmarks_list_2, points_source, points_target
+
 def landmark_detect_clahe2_helper(img):
     #-----Converting image to LAB Color model----------------------------------- 
     lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
