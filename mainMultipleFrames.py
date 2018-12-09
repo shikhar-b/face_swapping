@@ -15,31 +15,39 @@ from opticalFlow import *
 
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
-
-SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
-TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
+#
+# SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+# TARGET_PATH = 'datasets/Medium/LucianoRosso3.mp4'
 
 TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 
-# SOURCE_PATH = 'datasets/Hard/Joker.mp4'
-# TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
+SOURCE_PATH = 'datasets/Hard/Joker.mp4'
+TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
+
+frame_rate_for_swap = 5
 
 def loadVideo(path):
 	video = []
 	cap_source = cv2.VideoCapture(path)
 	videoSpecific1(cap_source, path)
 	start = time.time()
+	failure_count = 0
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
 
 			if flag_source:
+				failure_count = 0
 				pos_frame = cap_source.get(cv2.CAP_PROP_POS_FRAMES)
 				video.append(source_frame)
+			else:
+				if flag_source:
+					videoSpecific2(cap_source, pos_frame)
+				failure_count += 1
+				if failure_count > 5:
+					break
 
-			# if pos_frame > 20:
-			# 	break
 
 			if cv2.waitKey(10) == 27 or cap_source.get(cv2.CAP_PROP_POS_FRAMES) == cap_source.get(cv2.CAP_PROP_FRAME_COUNT):
 				break
@@ -63,9 +71,9 @@ def saveVideo(video, path = 'outputMultiple.avi'):
 
 def showFrame(video, frameNum):
 	tf = video[frameNum]
-	fld1, fld2, points1, points2 = face_detection.landmark_detect_clahe2(tf, tf)
+	fld1, fld2, points1, points2 = face_detection.landmark_detect_clahe2_multi(tf, tf, frameNum)
 	# visualizeFeatures(sf, points1)
-	visualizeFeatures(tf, points2)
+	# visualizeFeatures(tf, points2)
 
 #####################################################################################################
 
@@ -147,7 +155,7 @@ if __name__ == "__main__":
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
 
-		if frameNum % 5 == 0:
+		if frameNum % frame_rate_for_swap == 0:
 			try:
 				sf = getClosestSourceFrame(source_video_encodings, source_video, target_frame)
 			except:
@@ -158,23 +166,24 @@ if __name__ == "__main__":
 
 			#STEP 1: Landmark Detection
 			try:
-				fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe2(sf, tf)
+				fld1, fld2, points1 , points2 = face_detection.landmark_detect_clahe2_multi(sf, tf, frameNum)
+				if empty_points(points1, points2, 1, frameNum): continue
 			except KeyboardInterrupt:
 				sys.exit()
 			except:
 				if len(points1) == 0:
 					continue
-			if empty_points(points1, points2, 1): continue
+
 
 			# STEP 2: Convex Hull
 			try:
 				hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
+				if empty_points(hull1, hull2, 2, frameNum): continue
 			except KeyboardInterrupt:
 				sys.exit()
 			except:
 				print (traceback.format_exc())
 				continue
-			if empty_points(hull1, hull2, 2): continue
 
 			hull2 = np.asarray(hull2)
 			hull2[:, 0] = np.clip(hull2[:, 0], 0, target_frame.shape[1] - 1)
@@ -197,7 +206,7 @@ if __name__ == "__main__":
 			prev_target_frame = target_frame
 		else:
 			try:
-				output, points2 = doOpticalFlow(output, points2, target_frame, prev_target_frame)
+				output, points2 = doOpticalFlow(output, points2, target_frame, prev_target_frame, frameNum)
 				output_video.append(output)
 				prev_target_frame = target_frame
 			except KeyboardInterrupt:

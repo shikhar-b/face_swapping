@@ -2,15 +2,21 @@ import cv2
 import numpy as np
 import face_recognition
 from helpers import *
-import pdb
+import pdb, logging
 
-def landmark_detect(source_image, target_image):
+def landmark_detect(source_image, target_image, frame_number):
     face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
     face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
 
     # pdb.set_trace()
 
     if len(face_landmarks_list_1) == 0 or len(face_landmarks_list_2) == 0:
+        if len(face_landmarks_list_1) == 0 and len(face_landmarks_list_2) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in both')
+        if len(face_landmarks_list_1) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in source')
+        if len(face_landmarks_list_2) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in target')
         return []
 
     points_1, points_2 = intersect(face_landmarks_list_1[0], face_landmarks_list_2[0])
@@ -21,6 +27,7 @@ def landmark_detect(source_image, target_image):
 
     return face_landmarks_list_1[0], face_landmarks_list_2[0], listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
+<<<<<<< Updated upstream
 def landmark_detect_dual(source_image, target_image):
     face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
     face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
@@ -28,6 +35,20 @@ def landmark_detect_dual(source_image, target_image):
     # pdb.set_trace()
 
     if len(face_landmarks_list_1) == 0 or len(face_landmarks_list_2) == 0:
+=======
+def landmark_detect_dual(source_image, target_image, frame_number):
+    face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
+    face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
+    face_landmarks_list_2.append(face_landmarks_list_2.pop(0))
+
+    if len(face_landmarks_list_1) == 0 or len(face_landmarks_list_2) == 0:
+        if len(face_landmarks_list_1) == 0 and len(face_landmarks_list_2) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in both')
+        if len(face_landmarks_list_1) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in source')
+        if len(face_landmarks_list_2) == 0:
+            logging.error('Frame: ' + str(frame_number) + ' - face not detected in target')
+>>>>>>> Stashed changes
         return []
 
     points_source = []
@@ -47,31 +68,40 @@ def landmark_detect_dual(source_image, target_image):
 
     return face_landmarks_list_1, face_landmarks_list_2, points_source, points_target
 
+<<<<<<< Updated upstream
+=======
+'''Reference: https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/41075028'''
+>>>>>>> Stashed changes
 def landmark_detect_clahe2_helper(img):
-    #-----Converting image to LAB Color model----------------------------------- 
+    #Converting image to LAB Color model
     lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 
-    #-----Splitting the LAB image to different channels-------------------------
+    #Splitting the LAB image to different channels
     l, a, b = cv2.split(lab)
 
-    #-----Applying CLAHE to L-channel-------------------------------------------
+    #Applying CLAHE to L-channel
     clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8,8))
     cl = clahe.apply(l)
 
-    #-----Merge the CLAHE enhanced L-channel with the a and b channel-----------
+    #Merge the CLAHE enhanced L-channel with the a and b channel
     limg = cv2.merge((cl,a,b))
 
-    #-----Converting image from LAB Color model to RGB model--------------------
+    #Converting image from LAB Color model to RGB model
     final = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
-    # showBGRimage(final)
+
     return final
 
-def landmark_detect_clahe2(source_image, target_image):
+def landmark_detect_clahe2(source_image, target_image, frame_no):
     si = landmark_detect_clahe2_helper(source_image)
     ti = landmark_detect_clahe2_helper(target_image)
-    return landmark_detect(si, ti)
+    return landmark_detect_dual(si, ti, frame_no)
 
-def landmark_detect_clahe(source_image, target_image):
+def landmark_detect_clahe2_multi(source_image, target_image, frame_no):
+    si = landmark_detect_clahe2_helper(source_image)
+    ti = landmark_detect_clahe2_helper(target_image)
+    return landmark_detect(si, ti, frame_no)
+
+def landmark_detect_clahe(source_image, target_image, frame_no):
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     source_gray = convert_BGR2Gray(source_image)
     target_gray = convert_BGR2Gray(target_image)
@@ -79,7 +109,7 @@ def landmark_detect_clahe(source_image, target_image):
     cl1 = clahe.apply(source_gray)
     cl2 = clahe.apply(target_gray)
 
-    return landmark_detect(cl1, cl2)
+    return landmark_detect_dual(cl1, cl2, frame_no)
 
 def intersect(face_landmarks_1, face_landmarks_2):
     points_1,points_2 = [],[]

@@ -18,12 +18,8 @@ def calculateDelaunayTriangles_spatial(rect, points, img):
 
 	return listOfListToTuples(triangles.tolist())
 
-# calculate delanauy triangle
-def calculateDelaunayTriangles(rect, points, img):
-	# create subdiv
-	subdiv = cv2.Subdiv2D(rect);
-
-	# Insert points into subdiv
+def calculateDelaunayTriangles_subdiv(rect, points, img):
+	subdiv = cv2.Subdiv2D(rect)
 	for p in points:
 		subdiv.insert(p)
 
@@ -31,14 +27,11 @@ def calculateDelaunayTriangles(rect, points, img):
 	# draw_delaunay(imgToShow, subdiv)
 	# showBGRimage(imgToShow)
 
-	triangleList = subdiv.getTriangleList();
-
+	triangleList = subdiv.getTriangleList()
 	delaunayTri = []
-
 	pt = []
 
 	for t in triangleList:
-		imgToShow = np.copy(img)
 		pt.append((t[0], t[1]))
 		pt.append((t[2], t[3]))
 		pt.append((t[4], t[5]))
@@ -49,29 +42,24 @@ def calculateDelaunayTriangles(rect, points, img):
 
 		if rectContains(rect, pt1) and rectContains(rect, pt2) and rectContains(rect, pt3):
 			ind = []
-			# Get face-points (from 68 face detector) by coordinates
 			for j in xrange(0, 3):
 				for k in xrange(0, len(points)):
 					if (abs(pt[j][0] - points[k][0]) < 1.0 and abs(pt[j][1] - points[k][1]) < 1.0):
 						ind.append(k)
-					# Three points form a triangle. Triangle array corresponds to the file tri.txt in FaceMorph
 			if len(ind)==3:
 				delaunayTri.append((ind[0], ind[1], ind[2]))
 			elif len(ind) > 3:
 				ind = best_solution(ind,3, 5)
 				delaunayTri.append((ind[0], ind[1], ind[2]))
 			else:
-				print('Missed this one')
-				visualizeFeatures(imgToShow,points)
-				showBGRimage(imgToShow)
-
-
+				logging.error('Insufficient points for making triangle')
 		pt = []
 
 	return delaunayTri
 
+'''Reference: https://flothesof.github.io/farthest-neighbors.html'''
 def evaluate_solution(solution_set):
-    return sum([distance(a, b) for a, b in zip(solution_set[:-1], solution_set[1:])])
+	return sum([distance(a, b) for a, b in zip(solution_set[:-1], solution_set[1:])])
 
 def best_solution(points, k, tries):
     solution_sets = [incremental_farthest_search(points, k) for _ in range(tries)]
