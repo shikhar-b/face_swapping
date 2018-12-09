@@ -19,8 +19,8 @@ TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
 
-# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-# TARGET_PATH = 'datasets/Medium/LucianoRosso1.mp4'
+TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 
 # SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 # TARGET_PATH = 'datasets/Hard/LeonardoDiCaprio.mp4'
@@ -96,13 +96,16 @@ def getFrameFeatures(frame):
 		leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)
 		rightEyeLoc = np.asarray(landmarks[0]['right_eye'][3]).astype(np.int32)[:, None].T.astype(np.float32)
 		noseTipLoc = np.asarray(landmarks[0]['nose_tip'][2]).astype(np.int32)[:, None].T.astype(np.float32)
-		feature = np.abs(np.sum(np.square(noseTipLoc - leftEyeLoc))) / np.abs(np.sum(np.square(noseTipLoc - rightEyeLoc)))
+		topLipLoc = np.asarray(landmarks[0]['top_lip'][3]).astype(np.int32)[:, None].T.astype(np.float32)
+		bottomLipLoc = np.asarray(landmarks[0]['bottom_lip'][3]).astype(np.int32)[:, None].T.astype(np.float32)
+		feature = [np.abs(np.sum(np.square(noseTipLoc - leftEyeLoc))) / np.abs(np.sum(np.square(noseTipLoc - rightEyeLoc))),
+					np.abs(np.sum(np.square(topLipLoc - bottomLipLoc))) / np.abs(np.sum(np.square(noseTipLoc - topLipLoc))) ]
 	except:
-		feature = -999999999
-	return feature
+		feature = [-999999999, -999999999]
+	return np.asarray(feature)
 
 def getFeatureDistance(f1, f2):
-	return np.abs(f1 - f2)
+	return np.sum(np.abs(f1 - f2))
 
 def getAllEncodings(video):
 	source_video_encodings = []
@@ -144,7 +147,7 @@ if __name__ == "__main__":
 	for frameNum, target_frame in enumerate(target_video):
 		print ('Processing target frame # ' + str(frameNum))
 
-		if frameNum % 4 == 0:
+		if frameNum % 5 == 0:
 			try:
 				sf = getClosestSourceFrame(source_video_encodings, source_video, target_frame)
 			except:
