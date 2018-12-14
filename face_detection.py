@@ -5,25 +5,23 @@ from helpers import *
 import pdb, logging
 import dlib
 
-PREDICTOR_PATH = "datasets/shape_predictor_68_face_landmarks.dat"
-
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor(PREDICTOR_PATH)
-
-
-def get_landmarks(im):
-    rects = detector(im, 1)
-
-    if len(rects) > 1:
-        print 'TooManyFaces'
-    if len(rects) == 0:
-        print 'NoFaces'
-
-    return np.matrix([[p.x, p.y] for p in predictor(im, rects[0]).parts()])
-
 def landmark_detect_dlib(source_image, target_image, frame_number):
-     test = get_landmarks(target_image)
-     visualizeFeatures(target_image, test)
+    PREDICTOR_PATH = "datasets/shape_predictor_68_face_landmarks.dat"
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor(PREDICTOR_PATH)
+
+    def get_landmarks(im):
+        rects = detector(im, 1)
+
+        if len(rects) > 1:
+            print 'TooManyFaces'
+        if len(rects) == 0:
+            print 'NoFaces'
+
+        return np.matrix([[p.x, p.y] for p in predictor(im, rects[0]).parts()])
+
+    test = get_landmarks(target_image)
+    visualizeFeatures(target_image, test)
 
 def landmark_detect(source_image, target_image, frame_number):
     face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
