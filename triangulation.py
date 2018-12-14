@@ -13,7 +13,7 @@ def triangulation(target_frame, hull2):
     return dt
 
 def calculateDelaunayTriangles_spatial(rect, points, img):
-	visualizeDelaunay(rect, points, img)
+	# visualizeDelaunay(rect, points, img)
 	Tri = spatial.Delaunay(points)
 	triangles = Tri.simplices
 

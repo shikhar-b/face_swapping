@@ -13,9 +13,12 @@ from warping import *
 from cloning import *
 from opticalFlow import *
 
+SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
+
+SOURCE_PATH = 'datasets/Hard/Joker.mp4'
 TARGET_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-SOURCE_PATH = 'datasets/Easy/MrRobot.mp4'
-#
+
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso3.mp4'
 
@@ -99,7 +102,7 @@ def getFrameFeatures(frame):
 	f = face_detection.landmark_detect_clahe2_helper(frame)
 	landmarks = face_recognition.face_landmarks(f)
 	# visualizeFeatures(frame, np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T)
-	pdb.set_trace()
+	# pdb.set_trace()
 
 	try:
 		leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)

@@ -11,9 +11,23 @@ face_recognition
 
 Instructions:
 
-Run main.py after setting SOURCE_PATH for source video and TARGET_PATH for target video.
-Set frame rate for swap, for other frames we use optical flow for estimation.
+"Source" - The face to be replaced. This will be the face that will be shown in the resulting video.
+"Target" - The body into which the a new face will come. The body and surroundings of target video will be kept in the resulting video and the face will be of the source video.
 
-For Multiple Frame Video Matching, run mainMultipleFrames.py after setting SOURCE_PATH and TARGET_PATH inside it.
+Preserving source emotion:
 
-For Single Video Multiple Face Swap, run main.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
+	Run main.py after setting SOURCE_PATH for source video and TARGET_PATH for target video.
+	Set frame rate for swap, for other frames we use optical flow for estimation.
+
+	For Multiple Frame Video Matching, run mainMultipleFrames.py after setting SOURCE_PATH and TARGET_PATH inside it.
+
+	For Single Video Multiple Face Swap, run main.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
+
+Preserving target emotion:
+
+	Run main_target_emotion.py after setting SOURCE_PATH for source video and TARGET_PATH for target video.
+	Set frame rate for swap, for other frames we use optical flow for estimation.
+
+	For Multiple Frame Video Matching, run mainMultipleFramesTargetEmotion.py after setting SOURCE_PATH and TARGET_PATH inside it.
+
+	For Single Video Multiple Face Swap, run main.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
