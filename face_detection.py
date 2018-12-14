@@ -81,7 +81,7 @@ def landmark_detect_clahe2_helper(img):
 def landmark_detect_clahe2(source_image, target_image, frame_no):
     si = landmark_detect_clahe2_helper(source_image)
     ti = landmark_detect_clahe2_helper(target_image)
-    return landmark_detect_dual(si, ti, frame_no)
+    return landmark_detect(si, ti, frame_no)
 
 def landmark_detect_clahe2_multi(source_image, target_image, frame_no):
     si = landmark_detect_clahe2_helper(source_image)

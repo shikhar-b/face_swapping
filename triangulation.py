@@ -13,10 +13,20 @@ def triangulation(target_frame, hull2):
     return dt
 
 def calculateDelaunayTriangles_spatial(rect, points, img):
+	visualizeDelaunay(rect, points, img)
 	Tri = spatial.Delaunay(points)
 	triangles = Tri.simplices
 
 	return listOfListToTuples(triangles.tolist())
+
+def visualizeDelaunay(rect, points, img):
+	subdiv = cv2.Subdiv2D(rect)
+	for p in points:
+		subdiv.insert(p)
+
+	imgToShow = np.copy(img)
+	draw_delaunay(imgToShow, subdiv)
+	showBGRimage(imgToShow)
 
 def calculateDelaunayTriangles_subdiv(rect, points, img):
 	subdiv = cv2.Subdiv2D(rect)

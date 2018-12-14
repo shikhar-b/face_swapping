@@ -24,9 +24,29 @@ def convex_hull_internal_points(points1, points2, face_landmarks_dict_1,face_lan
     for i in xrange(0, len(hullIndex)):
         hull1.append(points1[int(hullIndex[i])])
         hull2.append(points2[int(hullIndex[i])])
+
     features = ['left_eye', 'right_eye', 'nose_bridge', 'nose_tip', 'top_lip']
     for feature in features:
         add_point(feature, face_landmarks_dict_1, face_landmarks_dict_2, hull1, hull2)
+
+    return hull1, hull2
+
+def convex_hull_all_internal_points(points1, points2, face_landmarks_dict_1,face_landmarks_dict_2):
+    hull1, hull2 = [], []
+    hullIndex = cv2.convexHull(np.array(points2).astype(np.int32), returnPoints=False)
+
+    for i in xrange(0, len(hullIndex)):
+        hull1.append(points1[int(hullIndex[i])])
+        hull2.append(points2[int(hullIndex[i])])
+
+    for key1, val1 in face_landmarks_dict_1.items():
+        if key1 in face_landmarks_dict_2:
+            if len(face_landmarks_dict_1[key1]) == len(face_landmarks_dict_2[key1]):
+                hull1.extend(np.array(face_landmarks_dict_1[key1]).astype(np.int32).tolist())
+                hull2.extend(np.array(face_landmarks_dict_2[key1]).astype(np.int32).tolist())
+            else:
+                logging.error('key: ' + key1 + ' missed')
+
     return hull1, hull2
 
 def convex_hull_internal_points_dual(points_source, points_target, face_landmarks_dict_1,face_landmarks_dict_2):
