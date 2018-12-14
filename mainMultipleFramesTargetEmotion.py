@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
 			# STEP 2: Convex Hull
 			try:
-				hull1, hull2 = convex_hull_internal_points(points1, points2, fld1, fld2)
+				hull1, hull2 = convex_hull_all_internal_points(points1, points2, fld1, fld2)
 				if empty_points(hull1, hull2, 2, frameNum): continue
 			except KeyboardInterrupt:
 				sys.exit()
