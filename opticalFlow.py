@@ -2,9 +2,10 @@ import cv2, numpy as np
 import pdb, logging
 from skimage.transform import SimilarityTransform, matrix_transform
 from helpers import *
-from convex_hull import convex_hull
+from convex_hull import *
 from triangulation import triangulation
 from warping import warping
+from face_detection import *
 
 # Parameters for lucas kanade optical flow
 lk_params = dict( winSize  = (15,15),
@@ -44,7 +45,13 @@ def doOpticalFlow(prevOutput, targetPoints, target_frame, prev_target_frame, fra
 
 def transform_image(points1, points2, img1, img2, frame_no):
 	img1Warped = np.copy(img2)
-	hull1, hull2 = convex_hull(points1, points2)
+	#face_landmarks_dict_1, face_landmarks_dict_2, _, _ = landmark_detect_clahe2(img1,img2,frame_no)
+	#visualizeFeatures(img2, points2)
+	#hull1, hull2 = convex_hull_all_internal_points(points1.tolist(), points2.tolist(), face_landmarks_dict_1, face_landmarks_dict_2)
+	hull1, hull2 = convex_hull(points1.tolist(), points2.tolist())
+	#visualizeFeatures(img2, hull2)
+	hull1 = np.array(hull1).astype(np.float32)
+	hull2 = np.array(hull2).astype(np.float32)
 	if empty_points(hull1, hull2, 2, frame_no): return img2
 
 	hull2 = np.asarray(hull2)

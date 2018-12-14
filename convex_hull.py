@@ -42,6 +42,10 @@ def convex_hull_all_internal_points(points1, points2, face_landmarks_dict_1,face
     for key1, val1 in face_landmarks_dict_1.items():
         if key1 in face_landmarks_dict_2:
             if len(face_landmarks_dict_1[key1]) == len(face_landmarks_dict_2[key1]):
+                #if key1 in ['top_lip', 'bottom_lip']:
+                #    hull1.extend(np.array(face_landmarks_dict_1[key1][0:7]).astype(np.int32).tolist())
+                #    hull2.extend(np.array(face_landmarks_dict_2[key1][0:7]).astype(np.int32).tolist())
+                #else:
                 hull1.extend(np.array(face_landmarks_dict_1[key1]).astype(np.int32).tolist())
                 hull2.extend(np.array(face_landmarks_dict_2[key1]).astype(np.int32).tolist())
             else:

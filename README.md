@@ -21,7 +21,7 @@ Preserving source emotion:
 
 	For Multiple Frame Video Matching, run mainMultipleFrames.py after setting SOURCE_PATH and TARGET_PATH inside it.
 
-	For Single Video Multiple Face Swap, run main.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
+	For Single Video Multiple Face Swap, run main2Face.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
 
 Preserving target emotion:
 
@@ -30,4 +30,4 @@ Preserving target emotion:
 
 	For Multiple Frame Video Matching, run mainMultipleFramesTargetEmotion.py after setting SOURCE_PATH and TARGET_PATH inside it.
 
-	For Single Video Multiple Face Swap, run main.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
+	For Single Video Multiple Face Swap, run main2Face_target_emotion.py after setting the same video in both SOURCE_PATH and TARGET_PATH.

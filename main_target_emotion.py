@@ -12,6 +12,7 @@ from warping import warping
 from cloning import cloning
 from opticalFlow import *
 
+frame_rate_for_swap = 5
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 
@@ -34,11 +35,11 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	out = cv2.VideoWriter('output_main_target_emotion.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
 	points1 = []
-	jump = 137
+	jump = 170
 	try:
 		while True:
 			flag_source, source_frame = cap_source.read()
@@ -52,10 +53,11 @@ if __name__ == "__main__":
 				# 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 				# 	img1Warped = np.copy(target_frame)
 				print pos_frame
-				if (pos_frame-1) % 5 == 0 :
+				if (pos_frame-1) % frame_rate_for_swap == 0 :
 
 					#STEP 1: Landmark Detection
 					try:
+						#face_detection.landmark_detect_dlib(source_frame, target_frame, pos_frame)
 						face_landmarks_dict_1, face_landmarks_dict_2, points1, points2 = face_detection.landmark_detect_clahe2(source_frame, target_frame, pos_frame)
 					except KeyboardInterrupt:
 						sys.exit()
@@ -65,8 +67,8 @@ if __name__ == "__main__":
 
 					if empty_points(points1, points2, 1, pos_frame): continue
 
-					visualizeFeatures(source_frame, points1)
-					visualizeFeatures(target_frame, points2)
+					# visualizeFeatures(source_frame, points1)
+					# visualizeFeatures(target_frame, points2)
 
 					# STEP 2: Convex Hull
 
@@ -77,8 +79,8 @@ if __name__ == "__main__":
 					except:
 						print (traceback.format_exc())
 						continue
-					visualizeFeatures(source_frame, hull1)
-					visualizeFeatures(target_frame, hull2)
+					# visualizeFeatures(source_frame, hull1)
+					# visualizeFeatures(target_frame, hull2)
 
 					if empty_points(hull1, hull2, 2, pos_frame): continue
 
@@ -89,6 +91,7 @@ if __name__ == "__main__":
 
 
 					# STEP 3: Triangulation
+					#visualizeFeatures(target_frame, hull2)
 					dt = triangulation(target_frame, hull2)
 					if len(dt) == 0:
 						logging.error('delaunay triangulation empty')

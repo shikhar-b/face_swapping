@@ -17,7 +17,7 @@ SOURCE_PATH = 'datasets/TwoVideo/DDNews.avi'
 TARGET_PATH =  SOURCE_PATH
 
 # TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
-# SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
+#SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
 frame_rate_for_swap = 5
 #
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output_2face.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	out = cv2.VideoWriter('output_2face_target_emotion.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
 	points1 = []
@@ -80,7 +80,7 @@ if __name__ == "__main__":
 						N = len(face_landmarks_dict_1);
 						for face_no in range(0, N):
 
-							hull_1, hull_2 = convex_hull_internal_points(points1[face_no], points2[face_no], face_landmarks_dict_1[face_no],face_landmarks_dict_2[face_no])
+							hull_1, hull_2 = convex_hull_all_internal_points(points1[face_no], points2[face_no], face_landmarks_dict_1[face_no],face_landmarks_dict_2[face_no])
 							hull_source.append(hull_1)
 							hull_target.append(hull_2)
 							if empty_points(hull_1, hull_2, 2, pos_frame): continue
