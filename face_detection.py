@@ -27,15 +27,6 @@ def landmark_detect(source_image, target_image, frame_number):
 
     return face_landmarks_list_1[0], face_landmarks_list_2[0], listOfListToTuples(points_1.tolist()), listOfListToTuples(points_2.tolist())
 
-<<<<<<< Updated upstream
-def landmark_detect_dual(source_image, target_image):
-    face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
-    face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
-    face_landmarks_list_2.append(face_landmarks_list_2.pop(0))
-    # pdb.set_trace()
-
-    if len(face_landmarks_list_1) == 0 or len(face_landmarks_list_2) == 0:
-=======
 def landmark_detect_dual(source_image, target_image, frame_number):
     face_landmarks_list_1 = face_recognition.face_landmarks(source_image)
     face_landmarks_list_2 = face_recognition.face_landmarks(target_image)
@@ -48,7 +39,6 @@ def landmark_detect_dual(source_image, target_image, frame_number):
             logging.error('Frame: ' + str(frame_number) + ' - face not detected in source')
         if len(face_landmarks_list_2) == 0:
             logging.error('Frame: ' + str(frame_number) + ' - face not detected in target')
->>>>>>> Stashed changes
         return []
 
     points_source = []
@@ -68,10 +58,7 @@ def landmark_detect_dual(source_image, target_image, frame_number):
 
     return face_landmarks_list_1, face_landmarks_list_2, points_source, points_target
 
-<<<<<<< Updated upstream
-=======
 '''Reference: https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv/41075028'''
->>>>>>> Stashed changes
 def landmark_detect_clahe2_helper(img):
     #Converting image to LAB Color model
     lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)

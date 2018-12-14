@@ -18,7 +18,7 @@ from opticalFlow import *
 
 TARGET_PATH = 'datasets/Easy/MrRobot.mp4'
 SOURCE_PATH = 'datasets/Easy/FrankUnderwood.mp4'
-frame_rate_for_swap = 20
+frame_rate_for_swap = 5
 #
 # SOURCE_PATH = 'datasets/Medium/LucianoRosso1.mp4'
 # TARGET_PATH = 'datasets/Medium/LucianoRosso2.mp4'
@@ -40,7 +40,7 @@ if __name__ == "__main__":
 	pos_frame = cap_target.get(cv2.CAP_PROP_POS_FRAMES)
 	frame_width = int(cap_target.get(3))
 	frame_height = int(cap_target.get(4))
-	out = cv2.VideoWriter('output_medium1.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
+	out = cv2.VideoWriter('output.avi', cv2.VideoWriter_fourcc(*'MJPG'), 24, (frame_width, frame_height))
 	limit = 1000
 	start = time.time()
 	points1 = []
