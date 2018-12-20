@@ -99,7 +99,7 @@ def getFrameFeatures(frame):
 	f = face_detection.landmark_detect_clahe2_helper(frame)
 	landmarks = face_recognition.face_landmarks(f)
 	# visualizeFeatures(frame, np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T)
-	pdb.set_trace()
+	#pdb.set_trace()
 
 	try:
 		leftEyeLoc = np.asarray(landmarks[0]['left_eye'][0]).astype(np.int32)[:, None].T.astype(np.float32)
