@@ -3,10 +3,10 @@ CIS 581 final project
 
 Requirements:
 
-Python 2.7
-OpenCV 3
-Numpy
-Scipy
+Python 2.7,
+OpenCV 3,
+Numpy,
+Scipy,
 face_recognition
 
 Instructions:
@@ -31,3 +31,7 @@ Preserving target emotion:
 	For Multiple Frame Video Matching, run mainMultipleFramesTargetEmotion.py after setting SOURCE_PATH and TARGET_PATH inside it.
 
 	For Single Video Multiple Face Swap, run main2Face_target_emotion.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
+
+
+Demo Videos:
+https://www.youtube.com/watch?v=PM9SF4uI2k0
