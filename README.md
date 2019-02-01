@@ -32,6 +32,8 @@ Preserving target emotion:
 
 	For Single Video Multiple Face Swap, run main2Face_target_emotion.py after setting the same video in both SOURCE_PATH and TARGET_PATH.
 
+Report:
+https://github.com/shikhar-b/face_swapping/blob/master/cis581_project_report.pdf
 
 Demo Videos:
 https://www.youtube.com/playlist?list=PLlt-maLNW7hw6fWwQAlpEHblpyfIu0h19
